@@ -1,0 +1,34 @@
+#!/usr/bin/env node
+
+'use strict';
+
+var fetch = require('..');
+var fs = require('fs');
+var co = require('co');
+var program = require('commander');
+
+program
+  .version(require('../package.json').version)
+  .usage('[options] filename/url')
+  .option('-d, --dest <path>', 'label config')
+  .parse(process.argv);
+
+var arg = program.args[0];
+
+co(function*() {
+  var args = {};
+
+  if (fs.existsSync(arg)) {
+    args.file = arg;
+  } else {
+    args.url = arg;
+  }
+
+  if (program.dest) {
+    args.dest = program.dest;
+  }
+
+  yield fetch(args);
+}).catch(function(err) {
+  console.error(err.message);
+});
