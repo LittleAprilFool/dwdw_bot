@@ -41,6 +41,7 @@ function updateUserSheet(){
 }
 
 function queryMovie($) {
+    console.log('movie')
     movie.movieInTheater().then((val) => {
         var returnMessage = '最近可以看的大于6.5分的电影有'
         for(var i in val)
@@ -67,7 +68,7 @@ tg.controller('StartController', ($) => {
 
 tg.controller('MovieController', ($) => {
     checkUser($)
-    queryMovie()
+    queryMovie($)
 })
 
 tg.controller('LOLController', ($) => {
