@@ -11,7 +11,6 @@ module.exports = {
             request(rankUrl, (err, res, body) => {
 	            if(!err && res.statusCode == 200) {
 		            var lolRank = JSON.parse(body)
-		            console.log(lolRank)
 		            resolve(lolRank)
 	            }
     	    })

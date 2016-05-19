@@ -53,7 +53,8 @@ function queryLOL($) {
     for(var user in usersheet) {
         if(usersheet[user].id == $.message.from.id) {
             lol.getRank(usersheet[user].player_name, usersheet[user].server_name).then((val) => {
-                $.sendMessage('你的段位是' + val.tier + val.rank + "，要不要和dw一起上分？")
+                if(val.tier != null) $.sendMessage('你的段位是' + val.tier + val.rank + "，要不要和dw一起上分？")
+                    else $.sendMessage('噫，你还没有段位，多打打匹配再来找dw上分吧')
             })
         }
     }
