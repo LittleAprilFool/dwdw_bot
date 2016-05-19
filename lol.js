@@ -9,11 +9,11 @@ module.exports = {
         var rankUrl = url + 's5str.php?' + 'playerName=' + encodeURIComponent(playerName) + '&serverName=' + encodeURIComponent(serverName)
         return new Promise((resolve, reject)=>{
             request(rankUrl, (err, res, body) => {
-	        if(!err && res.statusCode == 200) {
-		    var lolRank = JSON.parse(body)
-		    console.log(lolRank)
-		    resolve(lolRank)
-	        }
+	            if(!err && res.statusCode == 200) {
+		            var lolRank = JSON.parse(body)
+		            console.log(lolRank)
+		            resolve(lolRank)
+	            }
     	    })
         })
     }

@@ -4,11 +4,13 @@ var config = require('./config.js')
 var tg = require('telegram-node-bot')(config.token)
 var usersheet = require('./user.json')
 var movie = require('./movie.js')
+var lol = require('./lol.js')
 
 tg.router
     .when(['ping'], 'PingController')
     .when(['/start'], 'StartController')
     .when(['/movie'], 'MovieController')
+    .when(['/lol'], 'LOLController')
     .otherwise('AllController')
 
 tg.controller('PingController', ($) => {
@@ -38,11 +40,6 @@ function updateUserSheet(){
     })
 }
 
-tg.controller('StartController', ($) => {
-    $.sendMessage('Hello, ' + $.message.from.username);
-    checkUser($); 
-})
-
 function queryMovie($) {
     movie.movieInTheater().then((val) => {
         var returnMessage = '最近可以看的大于6.5分的电影有'
@@ -52,15 +49,38 @@ function queryMovie($) {
     })
 }
 
+function queryLOL($) {
+    for(var user in usersheet) {
+        if(usersheet[user].id == $.message.from.id) {
+            lol.getRank(usersheet[user].player_name, usersheet[user].server_name).then((val) => {
+                $.sendMessage('你的段位是' + val.tier + val.rank + "，要不要和dw一起上分？")
+            })
+        }
+    }
+}
+
+tg.controller('StartController', ($) => {
+    $.sendMessage('Hello, ' + $.message.from.username);
+    checkUser($); 
+})
+
 tg.controller('MovieController', ($) => {
-    queryMovie($)
+    checkUser($)
+    queryMovie()
+})
+
+tg.controller('LOLController', ($) => {
+    checkUser($)
+    queryLOL($)
 })
 
 tg.controller('AllController', ($) => {
     if(typeof $.message.text != 'undefined'){
+        checkUser($)
         var str = $.message.text
         var re = /dy|电影|今晚有没有/
         var found = str.match(re)
         if(found != null) queryMovie($)
     }
 })
+
