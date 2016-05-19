@@ -1,6 +1,6 @@
 'use strict'
 var fs = require('fs')
-var config = require('./config.js')
+var config = require('./config.json')
 var tg = require('telegram-node-bot')(config.token)
 var usersheet = require('./user.json')
 var movie = require('./movie.js')
@@ -41,7 +41,6 @@ function updateUserSheet(){
 }
 
 function queryMovie($) {
-    console.log('movie')
     movie.movieInTheater().then((val) => {
         var returnMessage = '最近可以看的大于6.5分的电影有'
         for(var i in val)
@@ -61,6 +60,17 @@ function queryLOL($) {
     }
 }
 
+function queryLOLFree($) {
+    lol.getFreeHero().then((val) => {
+        var returnMessage = "打呀打呀，听说这周周免有"
+        for(var i in val) {
+            var t = val[i]
+            returnMessage = returnMessage + t.name + '（' + t.title + '） '
+        }
+        $.sendMessage(returnMessage)
+    })
+}
+
 tg.controller('StartController', ($) => {
     $.sendMessage('Hello, ' + $.message.from.username);
     checkUser($); 
@@ -73,16 +83,14 @@ tg.controller('MovieController', ($) => {
 
 tg.controller('LOLController', ($) => {
     checkUser($)
-    queryLOL($)
+    queryLOLFree($)
 })
 
 tg.controller('AllController', ($) => {
     if(typeof $.message.text != 'undefined'){
         checkUser($)
-        var str = $.message.text
-        var re = /dy|电影|今晚有没有/
-        var found = str.match(re)
-        if(found != null) queryMovie($)
+        if($.message.text.match(/kdy|电影|今晚有没有/) != null) queryMovie($)
+        if($.message.text.match(/dyx|游戏|今晚有没有/) != null) queryLOLFree($)
     }
 })
 
