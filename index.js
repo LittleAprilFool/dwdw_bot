@@ -42,10 +42,8 @@ function updateUserSheet(){
 
 function queryMovie($) {
     movie.movieInTheater().then((val) => {
-        var returnMessage = '最近可以看的大于6.5分的电影有'
-        for(var i in val)
-            returnMessage = returnMessage + val[i].title + '(' + val[i].rating + ') '
-            $.sendMessage(returnMessage)
+        var returnMessage = '最近可以看的大于6.5分的电影有' + val.map(v => `${v.title}(${v.rating})`).join(' ')
+        $.sendMessage(returnMessage)
     })
 }
 
@@ -62,11 +60,7 @@ function queryLOL($) {
 
 function queryLOLFree($) {
     lol.getFreeHero().then((val) => {
-        var returnMessage = "打呀打呀，听说这周周免有"
-        for(var i in val) {
-            var t = val[i]
-            returnMessage = returnMessage + t.name + '（' + t.title + '） '
-        }
+        var returnMessage = "打呀打呀，听说这周周免有" + val.map(t => `${t.name}（${t.title}）`).join(' ')
         $.sendMessage(returnMessage)
     })
 }
