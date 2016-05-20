@@ -45,3 +45,30 @@ function getDaiwanToken() {
         }
     })
 }
+
+function getUserArea(username) {
+	var userUrl = url + 'UserArea?' + 'keyword=' + username
+	var options = {
+		url:userUrl,
+		headers: {
+			"DAIWAN-API-TOKEN":config.daiwan_token
+		}
+	}
+	request(options, (err, res, body) => {
+		console.log(JSON.parse(body))
+	})
+}
+
+function getCombatList(qquin) {
+	var combatUrl = url + 'CombatList?' + 'qquin=' + qquin + '&vaid=' + vaid + '&p=1'
+	var options = {
+		url:combatUrl,
+		headers: {
+			"DAIWAN-API-TOKEN":config.daiwan_token
+		}
+	}
+	request(options, (err, res, body) => {
+		console.log(JSON.parse(body))
+	})
+}
+
