@@ -80,15 +80,18 @@ function getLOLUser() {
 
 function getRecentLOLCombat(user) {
     lol.getCombatList(user.qquin, user.server_id).then((val) =>{
+        console.log(val[0])
         return val[0]
     })
 }
 
 function updateLOLCombat(){
-    usersheet.forEach(user) => {
-        var recent_combat = getRecentLOLCombat(user) 
-        console.log(recent_combat)   
-    }
+    usersheet.forEach((user) => {
+        lol.getCombatList(user.qquin, user.server_id).then((val) => {
+            user['recent_game_id'] = val[0].game_id
+            updateUserSheet()
+        })
+    })
 }
 
 updateLOLCombat()
