@@ -8,9 +8,9 @@ const url = "http://www.games-cube.com/combat/api/"
 module.exports = {
     getFreeHero() {
         var freeUrl = url + 'Free'
-        return new Promise((resolve, reject) => {
-            request(freeUrl, (err, res, body) => {
-                if(!err && res.statusCode == 200) {
+        return new Promise ((resolve, reject) => {
+            request (freeUrl, (err, res, body) => {
+                if (!err && res.statusCode == 200) {
                     var freeHero = JSON.parse(body)
                     resolve(freeHero)
                 }
@@ -20,15 +20,32 @@ module.exports = {
 
     getRank(playerName, serverName) {
         var rankUrl = url + 's5str.php?' + 'playerName=' + encodeURIComponent(playerName) + '&serverName=' + encodeURIComponent(serverName)
-        return new Promise((resolve, reject) => {
-            request(rankUrl, (err, res, body) => {
-	            if(!err && res.statusCode == 200) {
+        return new Promise ((resolve, reject) => {
+            request (rankUrl, (err, res, body) => {
+	            if (!err && res.statusCode == 200) {
 		            var lolRank = JSON.parse(body)
 		            resolve(lolRank)
 	            }
     	    })
         })
-    }
+    },
+
+    getUserArea(userName) {
+        var userUrl = url + 'UserArea?' + 'keyword=' + userName
+        var options = {
+            url:userUrl,
+            headers: {
+                "DAIWAN-API-TOKEN": config.daiwan_token
+            }
+        }
+        return new Promise ((resolve, reject) => {
+            request (options, (err, res, body) => {
+                if (!err && res.statusCode == 200) {
+                    resolve(JSON.parse(body))
+                }
+            })
+        }) 
+    }   
 }
 
 function getDaiwanToken() {
@@ -44,19 +61,6 @@ function getDaiwanToken() {
             }   
         }
     })
-}
-
-function getUserArea(username) {
-	var userUrl = url + 'UserArea?' + 'keyword=' + username
-	var options = {
-		url:userUrl,
-		headers: {
-			"DAIWAN-API-TOKEN":config.daiwan_token
-		}
-	}
-	request(options, (err, res, body) => {
-		console.log(JSON.parse(body))
-	})
 }
 
 function getCombatList(qquin) {

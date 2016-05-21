@@ -20,10 +20,9 @@ tg.controller('PingController', ($) => {
 })
 
 function checkUser($) {
-    for (var user in usersheet) {
-        if (usersheet[user].id == $.message.from.id) return;
-    }
-    console.log("Add New User")
+    usersheet.forEach((user) => {
+        if (user.id == $.message.from.id) return;
+    })
     var newuser = new Object()
     newuser["id"] = $.message.from.id
     newuser["username"] = $.message.from.username
@@ -34,6 +33,7 @@ function checkUser($) {
 }
 
 function updateUserSheet(){
+    console.log('update')
     fs.writeFile('user.json', JSON.stringify(usersheet, null, 4), (err) => {
         if(err)
             console.log(err);
@@ -48,14 +48,14 @@ function queryMovie($) {
 }
 
 function queryLOL($) {
-    for(var user in usersheet) {
-        if(usersheet[user].id == $.message.from.id) {
-            lol.getRank(usersheet[user].player_name, usersheet[user].server_name).then((val) => {
+    usersheet.forEach((user) => {
+        if (user.id == $.message.from.id) {
+            lol.getRank(user.player_name, user.server_name).then((val) => {
                 if(val.tier != null) $.sendMessage('你的段位是' + val.tier + val.rank + "，要不要和dw一起上分？")
                     else $.sendMessage('噫，你还没有段位，多打打匹配再来找dw上分吧')
             })
         }
-    }
+    })    
 }
 
 function queryLOLFree($) {
@@ -64,6 +64,20 @@ function queryLOLFree($) {
         $.sendMessage(returnMessage)
     })
 }
+
+function getLOLUser() {
+    usersheet.forEach((user) => {
+        lol.getUserArea(user.player_name).then((val) => {
+            val.data.forEach((account) => {
+                if (account.area_id == user.server_id) {
+                    user['qquin'] = account.qquin
+                }
+            })
+            updateUserSheet()
+        })
+    })
+}
+getLOLUser()
 
 tg.controller('StartController', ($) => {
     $.sendMessage('Hello, ' + $.message.from.username);
