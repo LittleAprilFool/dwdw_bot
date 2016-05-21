@@ -77,7 +77,22 @@ function getLOLUser() {
         })
     })
 }
-getLOLUser()
+
+function getRecentLOLCombat(user) {
+    lol.getCombatList(user.qquin, user.server_id).then((val) =>{
+        return val[0]
+    })
+}
+
+function updateLOLCombat(){
+    usersheet.forEach(user) => {
+        var recent_combat = getRecentLOLCombat(user) 
+        console.log(recent_combat)   
+    }
+}
+
+updateLOLCombat()
+
 
 tg.controller('StartController', ($) => {
     $.sendMessage('Hello, ' + $.message.from.username);
