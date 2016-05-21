@@ -78,18 +78,13 @@ function getLOLUser() {
     })
 }
 
-function getRecentLOLCombat(user) {
-    lol.getCombatList(user.qquin, user.server_id).then((val) =>{
-        console.log(val[0])
-        return val[0]
-    })
-}
-
 function updateLOLCombat(){
     usersheet.forEach((user) => {
         lol.getCombatList(user.qquin, user.server_id).then((val) => {
-            user['recent_game_id'] = val[0].game_id
-            updateUserSheet()
+            if (user.recent_game_id != val[0].game_id) {
+                console.log(user.username + '又在偷偷打游戏了，结果' + val[0].result + '了，真是一把' + val[0].judgement)
+            }
+            //updateUserSheet()
         })
     })
 }
