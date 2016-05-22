@@ -33,7 +33,6 @@ function checkUser($) {
 }
 
 function updateUserSheet(){
-    console.log('update')
     fs.writeFile('user.json', JSON.stringify(usersheet, null, 4), (err) => {
         if(err)
             console.log(err);
@@ -60,7 +59,10 @@ function queryLOL($) {
 
 function queryLOLFree($) {
     lol.getFreeHero().then((val) => {
-        var returnMessage = "打呀打呀，听说这周周免有" + val.map(t => `${t.name}（${t.title}）`).join(' ')
+        var returnMessage = "打呀打呀，听说这周周免有"
+        for(var hero in val) {
+            returnMessage = returnMessage + val[hero].name + '、'
+        }
         $.sendMessage(returnMessage)
     })
 }
@@ -98,11 +100,13 @@ tg.controller('StartController', ($) => {
 tg.controller('MovieController', ($) => {
     checkUser($)
     queryMovie($)
+    console.log('movie')
 })
 
 tg.controller('LOLController', ($) => {
     checkUser($)
     queryLOLFree($)
+    console.log('lol')
 })
 
 tg.controller('AllController', ($) => {
