@@ -1,4 +1,10 @@
 'use strict'
+
+/**
+ * Global error handler
+ */
+process.on('uncaughtException', e => console.log(e.stack));
+
 var fs = require('fs')
 var config = require('./config.json')
 var tg = require('telegram-node-bot')(config.token)
