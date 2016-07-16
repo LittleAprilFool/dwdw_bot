@@ -11,6 +11,10 @@ var tg = require('telegram-node-bot')(config.token)
 var usersheet = require('./user.json')
 var movie = require('./movie.js')
 var lol = require('./lol.js')
+const moment = require('moment-timezone')
+let movieQuietPeriod
+
+moment.tz.setDefault('Asia/Shanghai')
 
 tg.router
     .when(['ping'], 'PingController')
@@ -46,6 +50,11 @@ function updateUserSheet(){
 }
 
 function queryMovie($) {
+    // quiet period is 5 minutes
+    if (movieQuietPeriod && movieQuietPeriod.isAfter(moment())) {
+        return console.log('queryMovie: in quiet period')
+    }
+    movieQuietPeriod = moment().add(5, 'm')
     movie.movieInTheater().then((val) => {
         var returnMessage = '最近可以看的大于6.5分的电影有' + val.map(v => `${v.title}(${v.rating})`).join(' ')
         $.sendMessage(returnMessage)
