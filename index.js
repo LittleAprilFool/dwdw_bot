@@ -12,11 +12,15 @@ var usersheet = require('./user.json')
 var movie = require('./movie.js')
 var lol = require('./lol.js')
 
+const qaq = ['⚆_⚆', '...⁄(⁄ ⁄•⁄ω⁄•⁄ ⁄)⁄....', '(๑¯ิε ¯ิ๑)', '( ͡° ͜ʖ ͡°)', '...(｡•ˇ‸ˇ•｡) ...', '٩̋(๑˃́ꇴ˂̀๑)', '눈_눈', '(ÒωÓױ)', '((*′ ▽‘)爻(′▽‘*))', '(ง •̀_•́)ง┻━┻', '(ฅ´ω`ฅ)','(๑>◡<๑)', '(❁´▽`❁)', '～♪( ´θ｀)ノ', '(੭ु≧▽≦)੭ु', '(´・ω・｀)', '╰(*°▽°*)╯', '(PД`q。)·。。。。。。','(●′ω`●)','(　･ิω･ิ)ノิ'] 
+
 tg.router
     .when(['ping'], 'PingController')
     .when(['/start'], 'StartController')
     .when(['/movie'], 'MovieController')
-    .when(['/lol'], 'LOLController')
+    // .when(['/lol'], 'LOLController')
+    .when(['/ppq'], 'PPQController')
+    .when(['/cfm'], 'MealController')
     .otherwise('AllController')
 
 tg.controller('PingController', ($) => {
@@ -55,7 +59,7 @@ function queryMovie($) {
 }
 
 function replyApril($) {
-    $.sendMessage('她在学习呢')
+    $.sendMessage('她在为了建设社会主义而好好学习呢' + randomSomething(qaq))
 }
 
 function queryLOL($) {
@@ -104,8 +108,12 @@ function updateLOLCombat($){
     })
 }
 
+function randomSomething(pool){
+    return pool[Math.floor(Math.random() * pool.length)]
+}
+
 tg.controller('StartController', ($) => {
-    $.sendMessage('Hello, ' + $.message.from.username);
+    $.sendMessage('Hello, ' + $.message.from.username + randomSomething(qaq));
     checkUser($); 
 })
 
@@ -121,13 +129,26 @@ tg.controller('LOLController', ($) => {
     console.log('lol')
 })
 
+tg.controller('PPQController', ($) => {
+    checkUser($)
+    var pool = ['jrc', 'leo', 'arthur', 'wy', 'luyor']
+    $.sendMessage(randomSomething(pool) + '去看看ppq有没有人 ' + randomSomething(qaq))
+})
+
+tg.controller('MealController', ($) => {
+    checkUser($)
+    var pool = ['竹园', '牛肉面', 'Sushi', 'Brito', 'A&W', 'Waffle House', 'pizza', 'donair']
+    var luckydog = Math.floor(Math.random() * pool.length)
+    $.sendMessage('那就吃'+ randomSomething(pool) + '吧！' + randomSomething(qaq))
+})
+
 tg.controller('AllController', ($) => {
     if(typeof $.message.text != 'undefined'){
         checkUser($)
-        updateLOLCombat($)
+        // updateLOLCombat($)
         if($.message.text.match(/kdy|电影|今晚有没有/) != null) queryMovie($)
-        if($.message.text.match(/dyx|游戏|今晚有没有/) != null) queryLOLFree($)
-        if($.message.text.match(/april|April|大王|王奕|学姐/)!= null) replyApril($)
+        // if($.message.text.match(/dyx|游戏|今晚有没有/) != null) queryLOLFree($)
+        if($.message.text.match(/april|April|大王|王奕|学姐|wy/)!= null) replyApril($)
     }
 })
 
