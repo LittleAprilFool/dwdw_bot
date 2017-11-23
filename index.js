@@ -146,9 +146,9 @@ tg.controller('AllController', ($) => {
     if(typeof $.message.text != 'undefined'){
         checkUser($)
         // updateLOLCombat($)
-        if($.message.text.match(/kdy|电影|今晚有没有/) != null) queryMovie($)
+        // if($.message.text.match(/kdy|电影|今晚有没有/) != null) queryMovie($)
         // if($.message.text.match(/dyx|游戏|今晚有没有/) != null) queryLOLFree($)
-        if($.message.text.match(/april|April|大王|王奕|学姐|wy/)!= null) replyApril($)
+        // if($.message.text.match(/april|April|大王|王奕|学姐|wy/)!= null) replyApril($)
     }
 })
 
