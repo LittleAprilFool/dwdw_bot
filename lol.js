@@ -10,6 +10,9 @@ module.exports = {
         var freeUrl = url + 'Free'
         return new Promise ((resolve, reject) => {
             request (freeUrl, (err, res, body) => {
+                if (!err && res.statusCode == 404) {
+                    getDaiwanToken()
+                }
                 if (!err && res.statusCode == 200) {
                     var freeHero = JSON.parse(body)
                     resolve(freeHero)

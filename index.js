@@ -26,9 +26,11 @@ tg.controller('PingController', ($) => {
 })
 
 function checkUser($) {
+    var is_new = true;
     usersheet.forEach((user) => {
-        if (user.id == $.message.from.id) return;
+        if (user.id == $.message.from.id)  is_new = false
     })
+    if(!is_new) return;
     var newuser = new Object()
     newuser["id"] = $.message.from.id
     newuser["username"] = $.message.from.username
@@ -50,6 +52,10 @@ function queryMovie($) {
         var returnMessage = '最近可以看的大于6.5分的电影有' + val.map(v => `${v.title}(${v.rating})`).join(' ')
         $.sendMessage(returnMessage)
     })
+}
+
+function replyApril($) {
+    $.sendMessage('她在学习呢')
 }
 
 function queryLOL($) {
@@ -121,6 +127,7 @@ tg.controller('AllController', ($) => {
         updateLOLCombat($)
         if($.message.text.match(/kdy|电影|今晚有没有/) != null) queryMovie($)
         if($.message.text.match(/dyx|游戏|今晚有没有/) != null) queryLOLFree($)
+        if($.message.text.match(/april|April|大王|王奕|学姐/)!= null) replyApril($)
     }
 })
 
