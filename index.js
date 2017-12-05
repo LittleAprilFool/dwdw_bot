@@ -37,7 +37,7 @@ tg.controller('PingController', ($) => {
 
 tg.controller('BusController', ($) => {
     $.sendMessage("Next buses at SCIENCE RD")
-    request('http://api.translink.ca/rttiapi/v1/stops/51862/estimates?apikey=Gl2GhiydzTk5PwEK0G0f', function(error, response, body) {
+    request('http://api.translink.ca/rttiapi/v1/stops/51862/estimates?apikey='+config.translink_token, function(error, response, body) {
         if(!error && response.statusCode == 200) {
             parseString(body, function (err, result) {
                 result.NextBuses.NextBus.forEach((bus) => {
