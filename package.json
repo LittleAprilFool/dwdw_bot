@@ -17,5 +17,8 @@
     "fetchurl": "^0.1.0",
     "request": "^2.72.0",
     "telegram-node-bot": "^2.1.2"
+  },
+  "devDependencies": {
+    "xml2js": "^0.4.19"
   }
 }

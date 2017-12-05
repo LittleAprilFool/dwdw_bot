@@ -6,6 +6,8 @@
 process.on('uncaughtException', e => console.log(e.stack));
 
 var fs = require('fs')
+var request = require('request');
+var parseString = require('xml2js').parseString;
 var config = require('./config.json')
 var tg = require('telegram-node-bot')(config.token)
 var usersheet = require('./user.json')
@@ -24,11 +26,25 @@ tg.router
     .when(['/cfm'], 'MealController')
     .when(['/addwinner'], 'AddwinnerController')
     .when(['/winner'], 'WinnerController')
+    .when(['/bus'], 'BusController')
     .otherwise('AllController')
 
 tg.controller('PingController', ($) => {
     tg.for('ping', () => {
         $.sendMessage('pong')
+    })
+})
+
+tg.controller('BusController', ($) => {
+    $.sendMessage("Next buses at SCIENCE RD")
+    request('http://api.translink.ca/rttiapi/v1/stops/51862/estimates?apikey=Gl2GhiydzTk5PwEK0G0f', function(error, response, body) {
+        if(!error && response.statusCode == 200) {
+            parseString(body, function (err, result) {
+                result.NextBuses.NextBus.forEach((bus) => {
+                    $.sendMessage('The next ' + bus.RouteNo + ':  ' + bus.Schedules[0].Schedule[0].ExpectedLeaveTime)
+                })
+            })
+        }
     })
 })
 
