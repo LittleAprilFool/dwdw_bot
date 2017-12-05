@@ -9,6 +9,7 @@ var fs = require('fs')
 var config = require('./config.json')
 var tg = require('telegram-node-bot')(config.token)
 var usersheet = require('./user.json')
+var ppqsheet = require('./game.json')
 var movie = require('./movie.js')
 var lol = require('./lol.js')
 
@@ -21,6 +22,8 @@ tg.router
     // .when(['/lol'], 'LOLController')
     .when(['/ppq'], 'PPQController')
     .when(['/cfm'], 'MealController')
+    .when(['/addwinner'], 'AddwinnerController')
+    .when(['/winner'], 'WinnerController')
     .otherwise('AllController')
 
 tg.controller('PingController', ($) => {
@@ -28,6 +31,60 @@ tg.controller('PingController', ($) => {
         $.sendMessage('pong')
     })
 })
+
+tg.controller('WinnerController', ($) => {
+    var playerlist = []
+    var ppqPlayer = getppqPlayer(usersheet)
+    ppqPlayer.forEach((player)=>{
+        var time = 0
+        for (var i = 0; i < ppqsheet.length; i++) {
+            if (ppqsheet[i].winner == player.first_name)
+            time++;
+        }
+        player.time = time
+    })
+    ppqPlayer.sort(function(a, b) {
+        return a.time < b.time
+    })
+    var str = ''
+    ppqPlayer.forEach((player) =>{
+        if (player.time != 0)
+            str = str + player.first_name + ' - ' + player.time + '; '
+    })
+    $.sendMessage(str)
+})
+
+function enterWinner(name, adder, $) {
+    var newrecord = new Object()
+    var datetime = new Date()
+    newrecord['winner'] = name
+    newrecord['adder'] = adder
+    newrecord['date'] = datetime.getDate()
+    newrecord['month'] = datetime.getMonth() + 1
+    ppqsheet.push(newrecord) 
+    updateSheet('game.json', ppqsheet)
+    $.sendMessage("Gotcha! " + name + " is the winner today~")
+}
+
+tg.controller('AddwinnerController', ($) => {
+    var ppqPlayer = getppqPlayer(usersheet)
+    var menu = {
+        message: 'Who is the winner today?',
+        layout: 2,
+    }
+    ppqPlayer.forEach((player) => {
+        menu[player.first_name] = () => { enterWinner(player.first_name, $.message.from.id, $)}
+    })
+    $.runMenu(menu)
+})
+
+function getppqPlayer(usersheet) {
+    var ppqPlayer = []
+    usersheet.forEach((user) =>{
+        if (user.isppq == true) ppqPlayer.push(user)
+    })
+    return ppqPlayer
+}
 
 function checkUser($) {
     var is_new = true;
@@ -41,11 +98,11 @@ function checkUser($) {
     newuser["first_name"] = $.message.from.first_name
     newuser["last_name"] = $.message.from.last_name
     usersheet.push(newuser)
-    updateUserSheet()
+    updateSheet('user.json', usersheet)
 }
 
-function updateUserSheet(){
-    fs.writeFile('user.json', JSON.stringify(usersheet, null, 4), (err) => {
+function updateSheet(name, namejson){
+    fs.writeFile(name, JSON.stringify(namejson, null, 4), (err) => {
         if(err)
             console.log(err);
     })
@@ -113,7 +170,7 @@ function randomSomething(pool){
 }
 
 tg.controller('StartController', ($) => {
-    $.sendMessage('Hello, ' + $.message.from.username + randomSomething(qaq));
+    $.sendMessage('Hello, ' + $.message.from.first_name);
     checkUser($); 
 })
 
@@ -132,14 +189,14 @@ tg.controller('LOLController', ($) => {
 tg.controller('PPQController', ($) => {
     checkUser($)
     var pool = ['jrc', 'leo', 'arthur', 'wy', 'luyor']
-    $.sendMessage(randomSomething(pool) + '去看看ppq有没有人 ' + randomSomething(qaq))
+    $.sendMessage(randomSomething(pool) + '去看看ppq有没有人 ')
 })
 
 tg.controller('MealController', ($) => {
     checkUser($)
     var pool = ['竹园', '牛肉面', 'Sushi', 'Brito', 'A&W', 'Waffle House', 'pizza', 'donair']
     var luckydog = Math.floor(Math.random() * pool.length)
-    $.sendMessage('那就吃'+ randomSomething(pool) + '吧！' + randomSomething(qaq))
+    $.sendMessage('那就吃'+ randomSomething(pool) + '吧！')
 })
 
 tg.controller('AllController', ($) => {
