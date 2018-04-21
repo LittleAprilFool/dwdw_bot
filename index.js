@@ -24,28 +24,32 @@ tg.router
     // .when(['/lol'], 'LOLController')
     .when(['/ppq'], 'PPQController')
     .when(['/cfm'], 'MealController')
-    .when(['/addwinner'], 'AddwinnerController')
-    .when(['/winner'], 'WinnerController')
+    // .when(['/addwinner'], 'AddwinnerController')
+    // .when(['/winner'], 'WinnerController')
     .when(['/bus'], 'BusController')
     .otherwise('AllController')
 
 tg.controller('PingController', ($) => {
     tg.for('ping', () => {
-        $.sendMessage('pong')
+        if(isLeo($)) $.sendMessage("ping个毛线")
+        else $.sendMessage('pong')
     })
 })
 
 tg.controller('BusController', ($) => {
-    $.sendMessage("Next buses at SCIENCE RD")
-    request('http://api.translink.ca/rttiapi/v1/stops/51862/estimates?apikey='+config.translink_token, function(error, response, body) {
-        if(!error && response.statusCode == 200) {
-            parseString(body, function (err, result) {
-                result.NextBuses.NextBus.forEach((bus) => {
-                    $.sendMessage('The next ' + bus.RouteNo + ':  ' + bus.Schedules[0].Schedule[0].ExpectedLeaveTime)
+    if (isLeo($)) $.sendMessage("坐个毛线的车")
+    else {
+        $.sendMessage("Next buses at SCIENCE RD")
+        request('http://api.translink.ca/rttiapi/v1/stops/51862/estimates?apikey='+config.translink_token, function(error, response, body) {
+            if(!error && response.statusCode == 200) {
+                parseString(body, function (err, result) {
+                    result.NextBuses.NextBus.forEach((bus) => {
+                        $.sendMessage('The next ' + bus.RouteNo + ':  ' + bus.Schedules[0].Schedule[0].ExpectedLeaveTime)
+                    })
                 })
-            })
-        }
-    })
+            }
+        })
+    }
 })
 
 tg.controller('WinnerController', ($) => {
@@ -102,6 +106,13 @@ function getppqPlayer(usersheet) {
     return ppqPlayer
 }
 
+function isLeo($){
+    if($.message.from.username=="xxx")
+        return true
+    else
+        return false
+}
+
 function checkUser($) {
     var is_new = true;
     usersheet.forEach((user) => {
@@ -127,7 +138,8 @@ function updateSheet(name, namejson){
 function queryMovie($) {
     movie.movieInTheater().then((val) => {
         var returnMessage = '最近可以看的大于6.5分的电影有' + val.map(v => `${v.title}(${v.rating})`).join(' ')
-        $.sendMessage(returnMessage)
+        if (isLeo($)) $.sendMessage("看个毛线的电影")
+        else $.sendMessage(returnMessage)
     })
 }
 
@@ -186,7 +198,8 @@ function randomSomething(pool){
 }
 
 tg.controller('StartController', ($) => {
-    $.sendMessage('Hello, ' + $.message.from.first_name);
+    if(isLeo($)) $.sendMessage("走开，别烦我")
+    else $.sendMessage('Hello, ' + $.message.from.first_name);
     checkUser($); 
 })
 
@@ -204,15 +217,17 @@ tg.controller('LOLController', ($) => {
 
 tg.controller('PPQController', ($) => {
     checkUser($)
-    var pool = ['jrc', 'leo', 'arthur', 'wy', 'luyor']
-    $.sendMessage(randomSomething(pool) + '去看看ppq有没有人 ')
+    var pool = ['jrc', 'leo', 'datui', 'wy', 'cjc']
+    if(isLeo($)) $.sendMessage("打个毛线的球")
+    else $.sendMessage(randomSomething(pool) + '去看看ppq有没有人 ')
 })
 
 tg.controller('MealController', ($) => {
     checkUser($)
     var pool = ['竹园', '牛肉面', 'Sushi', 'Brito', 'A&W', 'Waffle House', 'pizza', 'donair']
     var luckydog = Math.floor(Math.random() * pool.length)
-    $.sendMessage('那就吃'+ randomSomething(pool) + '吧！')
+    if(isLeo($)) $.sendMessage('吃个毛线的饭')
+    else $.sendMessage('那就吃'+ randomSomething(pool) + '吧！')
 })
 
 tg.controller('AllController', ($) => {
