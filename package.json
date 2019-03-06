@@ -13,10 +13,12 @@
   "author": "April Wang",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.16.4",
     "fetch": "^1.0.1",
     "fetchurl": "^0.1.0",
     "request": "^2.72.0",
-    "telegram-node-bot": "^2.1.2"
+    "telegram-node-bot": "^2.1.2",
+    "twitch-realtime": "^0.6.0"
   },
   "devDependencies": {
     "xml2js": "^0.4.19"
