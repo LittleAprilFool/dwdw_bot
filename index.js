@@ -230,6 +230,10 @@ tg.controller('MealController', ($) => {
     else $.sendMessage('那就吃'+ randomSomething(pool) + '吧！')
 })
 
+tg.controller('NoiseController', ($) => {
+    $.sendMessage('你烦不烦啊')
+})
+
 tg.controller('AllController', ($) => {
     if(typeof $.message.text != 'undefined'){
         checkUser($)
