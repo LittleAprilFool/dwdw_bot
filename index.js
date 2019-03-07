@@ -12,8 +12,31 @@ var config = require('./config.json')
 var tg = require('telegram-node-bot')(config.token)
 var usersheet = require('./user.json')
 var ppqsheet = require('./game.json')
+var streamsheet = require('./stream.json')
 var movie = require('./movie.js')
 var lol = require('./lol.js')
+var twitch = require('./twitch.js')
+
+var twitch_notification = []
+
+function twitchCallback(id){
+	let message = ""
+	streamsheet.forEach((item)=>{
+		if (item.user_id == id){
+			message += item.message
+	//		if(!item.toggle) {
+				message += "上线啦！:"
+				message += item.link
+	//		} else message += "洗洗睡了"
+	//		item.toggle = !item.toggle
+		}
+	})
+	twitch_notification.forEach((chatId)=>{
+		tg.sendMessage(chatId, message)
+	})
+}
+
+twitch.initialize(twitchCallback)
 
 const qaq = ['⚆_⚆', '...⁄(⁄ ⁄•⁄ω⁄•⁄ ⁄)⁄....', '(๑¯ิε ¯ิ๑)', '( ͡° ͜ʖ ͡°)', '...(｡•ˇ‸ˇ•｡) ...', '٩̋(๑˃́ꇴ˂̀๑)', '눈_눈', '(ÒωÓױ)', '((*′ ▽‘)爻(′▽‘*))', '(ง •̀_•́)ง┻━┻', '(ฅ´ω`ฅ)','(๑>◡<๑)', '(❁´▽`❁)', '～♪( ´θ｀)ノ', '(੭ु≧▽≦)੭ु', '(´・ω・｀)', '╰(*°▽°*)╯', '(PД`q。)·。。。。。。','(●′ω`●)','(　･ิω･ิ)ノิ'] 
 
@@ -27,7 +50,20 @@ tg.router
     // .when(['/addwinner'], 'AddwinnerController')
     // .when(['/winner'], 'WinnerController')
     .when(['/bus'], 'BusController')
+	.when(['/twitch'], 'TwitchController')
     .otherwise('AllController')
+
+tg.controller('TwitchController', ($) => {
+	let index = twitch_notification.indexOf($.chatId)
+	if (index >= 0){
+		$.sendMessage("Remove Twitch notification")
+		twitch_notification.splice(index, 1)
+	}
+	else {
+		$.sendMessage("Add Twitch notification")
+		twitch_notification.push($.chatId)
+	}
+})
 
 tg.controller('PingController', ($) => {
     tg.for('ping', () => {
