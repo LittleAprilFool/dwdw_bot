@@ -50,8 +50,21 @@ tg.router
     // .when(['/addwinner'], 'AddwinnerController')
     // .when(['/winner'], 'WinnerController')
     .when(['/bus'], 'BusController')
-	.when(['/twitch'], 'TwitchController')
+    .when(['/twitch'], 'TwitchController')
+    .when(['/chat'], 'ChatController')
     .otherwise('AllController')
+
+tg.controller('ChatController', ($) =>{
+    let text = $.args
+    request.get({url: "http://127.0.0.1:5000", qs: {"que": text}}, function(err, response, body) {
+        if(err){
+            $.sendMessage("啊呀我坏了")
+        } else{
+            let content = JSON.parse(body)
+            $.sendMessage(content["text"])
+        }
+    })
+})
 
 tg.controller('TwitchController', ($) => {
 	let index = twitch_notification.indexOf($.chatId)
